@@ -372,7 +372,26 @@ function updatePhysics(timePassed) {
     element.threejs.quaternion.copy(element.cannonjs.quaternion);
   });
 }
-
+function eventHandler(event) {
+    event.preventDefault(); // Prevent default actions like scrolling
+    if (autopilot) startGame();
+    else splitBlockAndAddNextOneIfOverlaps();
+  }
+  window.addEventListener("touchstart", eventHandler, { passive: false }); 
+  function updateCameraAndViewport() {
+    const aspect = window.innerWidth / window.innerHeight;
+    const width = 10;
+    const height = width / aspect;
+    camera.left = width / -1;
+    camera.right = width / 1;
+    camera.top = height / 1;
+    camera.bottom = height / -1;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  }
+  window.addEventListener("resize", updateCameraAndViewport);
+  updateCameraAndViewport(); // Call it to initialize the view correctly
+  
 window.addEventListener("resize", () => {
   // Adjust camera
   console.log("resize", window.innerWidth, window.innerHeight);
