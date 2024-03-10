@@ -40,6 +40,7 @@ const originalBoxSize = 3; // Original width and height of a box
 let autopilot;
 let gameEnded;
 let robotPrecision; // Determines how precise the game is on autopilot
+let lastTapTime = 0;
 
 const scoreElement = document.getElementById("score");
 const instructionsElement = document.getElementById("instructions");
@@ -374,6 +375,14 @@ function updatePhysics(timePassed) {
 }
 function eventHandler(event) {
     event.preventDefault(); // Prevent default actions like scrolling
+    const currentTime = Date.now();
+    const tapInterval = currentTime - lastTapTime;
+    lastTapTime = currentTime;
+    if (tapInterval < 300 && tapInterval > 0) {
+        // Detected a double-tap
+        console.log("Double tap detected.");
+        startGame();
+      }
     if (autopilot) startGame();
     else splitBlockAndAddNextOneIfOverlaps();
   }
