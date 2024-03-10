@@ -374,19 +374,34 @@ function updatePhysics(timePassed) {
   });
 }
 function eventHandler(event) {
-    event.preventDefault(); // Prevent default actions like scrolling
+    event.preventDefault(); // Prevent default actions like scrolling and zooming on touch devices
+
+    // Handle game logic here
+    if (autopilot) {
+        startGame();
+    } else if (!gameEnded) {
+        splitBlockAndAddNextOneIfOverlaps();
+    }
+}
+
+// Separate handlers for touch and mouse to avoid conflicts
+function handleTouchStart(event) {
     const currentTime = Date.now();
     const tapInterval = currentTime - lastTapTime;
     lastTapTime = currentTime;
+
     if (tapInterval < 300 && tapInterval > 0) {
         // Detected a double-tap
         console.log("Double tap detected.");
-        startGame();
-      }
-    if (autopilot) startGame();
-    else splitBlockAndAddNextOneIfOverlaps();
+        startGame(); // Or any other double-tap action
+    } else {
+        // Normal tap
+        eventHandler(event);
+    }
   }
   window.addEventListener("touchstart", eventHandler, { passive: false }); 
+  window.addEventListener("mousedown", eventHandler);
+  
   function updateCameraAndViewport() {
     const aspect = window.innerWidth / window.innerHeight;
     const width = 10;
